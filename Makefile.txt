@@ -1,0 +1,28 @@
+CC = gcc
+CFLAGS =  -O2 -Iinclude
+
+LIB = libAllocator.a
+OBJ = allocate.o
+
+DEMO = demo
+DEMO_SRC = demos/sample_program.c
+
+all: $(LIB) $(DEMO)
+
+# Create static library
+$(LIB): $(OBJ)
+	ar rcs $@ $^
+
+# Compile allocator source
+allocate.o: src/allocate.c include/allocate.h
+	$(CC) $(CFLAGS) -c src/allocate.c -o allocate.o
+
+# Compile demo separately and link with library
+$(DEMO): $(DEMO_SRC) $(LIB)
+	$(CC) $(CFLAGS) $(DEMO_SRC) -L. -lAllocator -o $(DEMO)
+
+run: $(DEMO)
+	./$(DEMO)
+
+clean:
+	rm -f *.o $(LIB) $(DEMO)
